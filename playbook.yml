@@ -1,0 +1,54 @@
+---
+- name: Configure Time Synchronization
+  hosts: default  # Replace with the target host or group of hosts
+  connection: ssh
+  become: yes # Run tasks with sudo privileges
+  become_user: root
+  become_method: sudo
+
+  tasks:
+    - name: Install Chrony package
+      yum:
+        name: chrony
+        state: present
+      become: yes
+
+    - name: Enable Chrony service
+      systemd:
+        name: chronyd
+        enabled: yes
+      become: yes
+
+    - name: Start Chrony service
+      systemd:
+        name: chronyd
+        state: started
+      become: yes
+
+    - name: Configure Chrony
+      blockinfile:
+        path: /etc/chrony.conf
+        block: |
+          server 169.254.169.123 prefer iburst
+          pool 0.amazon.pool.ntp.org iburst
+          pool 1.amazon.pool.ntp.org iburst
+          pool 2.amazon.pool.ntp.org iburst
+          pool 3.amazon.pool.ntp.org iburst
+      become: yes
+
+    - name: Restart Chrony service
+      systemd:
+        name: chronyd
+        state: restarted
+      become: yes
+
+
+#- name: 'Harden Image'
+ # hosts: default
+ # connection: ssh
+ # become: yes
+ # become_user: root
+ # become_method: sudo
+
+ # roles:
+  #  - plivo.ecs_amznlnx2_cis
