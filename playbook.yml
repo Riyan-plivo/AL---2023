@@ -8,7 +8,7 @@
 
   tasks:
     - name: Install Chrony package
-      yum:
+      dnf:
         name: chrony
         state: present
       become: yes
@@ -41,7 +41,14 @@
         name: chronyd
         state: restarted
       become: yes
-
+    - name: Install dependencies
+      dnf:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - python3-pip
+        - git
+      # Add other dependencies as needed
 
 #- name: 'Harden Image'
  # hosts: default
