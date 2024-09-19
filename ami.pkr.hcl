@@ -24,18 +24,19 @@ locals {
   ]
 
   ami_users = [
+  "857556598075",
   "121985214683"  
   ]
 
   ami_regions = [
-    "us-east-1"
+    "us-west-1"
   ]
 }
 
 source "amazon-ebs" "amazon-linux-2023" {
-  region = "us-east-1"
-
-  ami_name                = "plivo/al2023-ami-hvm-1.0.{{timestamp}}-{{uuid}}-x86_64-gp2"
+  region = "us-west-1"
+                            
+  ami_name                = "plivo/al2023-ami-2023.{{timestamp}}-{{uuid}}-x86_64"
   ami_description         = "Plivo Golden AMI"
   ami_virtualization_type = "hvm"
 
@@ -74,7 +75,7 @@ source "amazon-ebs" "amazon-linux-2023" {
 
     filters = {
       virtualization-type = "hvm"
-      name                = "al2023-ami-hvm-1.0.*-x86_64-gp2"
+      name                = "al2023-ami-2023.*-x86_64"
       root-device-type    = "ebs"
     }
   }
@@ -101,10 +102,11 @@ build {
   ]
 
   provisioner "ansible" {
+    ansible_version      =  "2.9"
     playbook_file        = "./playbook.yml"
-    galaxy_file          = "./roles/requirements.yml"
-    galaxy_force_install = true
-    user                 = "ec2-user"
+  #  galaxy_file          = "./roles/requirements.yml"
+  #  galaxy_force_install = true
+     user                 = "ec2-user"
   }
 
   post-processor "manifest" {}
